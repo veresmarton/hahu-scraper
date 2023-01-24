@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 import numpy as np
 
-def query_file(make, model, year_start, file):
+def query_file(make, model, year, file):
     df = pd.read_csv(file)
     df = df.query('make==@make and model==@model and year<=@year+1 and year>=year-1')
     return df
