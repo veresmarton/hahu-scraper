@@ -6,7 +6,7 @@ import numpy as np
 
 def query_file(make, model, year, file):
     df = pd.read_csv(file)
-    df = df.query('make==@make and model==@model and year<=@year+1 and year>=year-1')
+    df = df.query('make==@make and model==@model and year<=@year+2 and year>=@year-2')
     return df
 
 if __name__ == "__main__":
