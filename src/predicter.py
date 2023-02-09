@@ -21,5 +21,5 @@ def predict(filepath="../data/interim/training_data.csv"):
     loaded_model = pickle.load(open("../data/processed/model.pkl", 'rb'))
     prediction = loaded_model.predict(X)
     prediction = pd.Series(prediction, name="prediction")
-    result = pd.concat([X, y, prediction], axis=1)
+    result = pd.concat([df, y, prediction], axis=1)
     result.to_csv("../data/processed/predicted_price.csv", index=False)
