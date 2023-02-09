@@ -10,6 +10,8 @@ import csv
 from datetime import datetime
 from bs4 import BeautifulSoup as bs
 
+from preprocess import preprocess
+
 def create_file(filename):
     if not os.path.exists(filename):
         colnames = ['run_datetime', 'query_name', 'make', 'model', 'link', 'price', 'fuel', 'year', 'engine_size', 'engine_power', 'mileage']
@@ -80,4 +82,7 @@ if __name__ == "__main__":
         run_queries(args.queries, args.file)
     else:
         scrape_pages(name=args.name, file=args.file, url=args.url)
+
+    preprocess(args.file)
+    #TODO predict
 
