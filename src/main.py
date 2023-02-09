@@ -11,6 +11,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup as bs
 
 from preprocess import preprocess
+from predicter import predict
 
 def create_file(filename):
     if not os.path.exists(filename):
@@ -84,5 +85,5 @@ if __name__ == "__main__":
         scrape_pages(name=args.name, file=args.file, url=args.url)
 
     preprocess(args.file)
-    #TODO predict
+    predict()
 
