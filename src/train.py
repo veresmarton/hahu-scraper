@@ -28,6 +28,7 @@ def train(filepath="../data/interim/training_data.csv"):
         ]
     ]
     X = X.dropna(how='any')
+    X = X.drop_duplicates(keep='first')
     y = X.price
     X = X.drop("price", axis=1)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=111)
