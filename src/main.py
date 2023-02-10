@@ -72,6 +72,13 @@ def run_queries(queryfile, dumpfile):
         name, url = q.split()
         scrape_pages(name=name, file=dumpfile, url=url)
 
+def collect_deals(source="../data/processed/predicted_price.csv"):
+    df = pd.read_csv(source)
+    lastest_date = df.run_datetime.max()
+    df = df[df.run_datetime == lastest_date]
+    df.query('price < prediction and price < 3500000')
+    df.to_csv(f"../data/prcessed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
+
 if __name__ == "__main__":
     argParser = argparse.ArgumentParser()
     argParser.add_argument("-q", "--queries", default=False)
@@ -86,4 +93,5 @@ if __name__ == "__main__":
 
     preprocess(args.file)
     predict()
+    collect_deals()
 
