@@ -80,7 +80,7 @@ def collect_deals(source="../data/processed/predicted_price.csv"):
     df['run_datetime'] = pd.to_datetime(df['run_datetime']).dt.date
     latest_date = df.run_datetime.max()
     df = df[df.run_datetime == latest_date]
-    df = df.query('price < (prediction+300000) and price < 3500000')
+    df = df.query('price < (prediction+300000) and price < 3500000 and mileage<175000')
     df.to_csv(f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
 
 if __name__ == "__main__":
