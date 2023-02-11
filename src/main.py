@@ -74,10 +74,14 @@ def run_queries(queryfile, dumpfile):
 
 def collect_deals(source="../data/processed/predicted_price.csv"):
     df = pd.read_csv(source)
-    lastest_date = df.run_datetime.max()
-    df = df[df.run_datetime == lastest_date]
-    df.query('price < prediction and price < 3500000')
-    df.to_csv(f"../data/prcessed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
+    df.drop_duplicates(keep='first', subset=['query_name', 'make', 'model', 'price', 'fuel',
+       'year', 'engine_size', 'engine_power', 'mileage', 'ford', 'hyundai',
+       'kia', 'skoda', 'volkswagen', 'is_diesel', 'year_old'], inplace=True)
+    df['run_datetime'] = pd.to_datetime(df['run_datetime']).dt.date
+    latest_date = df.run_datetime.max()
+    df = df[df.run_datetime == latest_date]
+    df = df.query('price < (prediction+300000) and price < 3500000')
+    df.to_csv(f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
 
 if __name__ == "__main__":
     argParser = argparse.ArgumentParser()
