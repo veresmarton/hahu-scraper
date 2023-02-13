@@ -6,12 +6,15 @@ import re
 import pandas as pd
 import numpy as np
 import csv
+import urllib3
 
 from datetime import datetime
 from bs4 import BeautifulSoup as bs
 
 from preprocess import preprocess
 from predicter import predict
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def create_file(filename):
     if not os.path.exists(filename):
@@ -25,7 +28,7 @@ def scrape_pages(name, file, url):
     page_number = 1
     next_page = True
     while next_page:
-        print(page_number)
+        print(page_number, end='\r')
         page = requests.get(url + '/page'+str(page_number), verify=False)
         if page.status_code != 200:
             break
@@ -68,8 +71,8 @@ def run_queries(queryfile, dumpfile):
     with open(queryfile, 'r', encoding='utf-8') as f:
         qs = f.readlines()
     for q in qs:
-        print(q)
         name, url = q.split()
+        print(name)
         scrape_pages(name=name, file=dumpfile, url=url)
 
 def collect_deals(source="../data/processed/predicted_price.csv"):
