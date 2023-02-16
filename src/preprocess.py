@@ -9,7 +9,7 @@ def preprocess(filepath):
     df["is_diesel"] = df["fuel"] == "Dízel"
     df["year_old"] = datetime.now().year - df["year"]
     # add avg
-    df["avg_price"] = df.apply(lambda x: similar_avg(x, df), axis=1)
+    # df["avg_price"] = df.apply(lambda x: similar_avg(x, df), axis=1)
     df.to_csv("../data/interim/training_data.csv", index=False)
 
 
