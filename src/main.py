@@ -75,16 +75,35 @@ def run_queries(queryfile, dumpfile):
         print(name)
         scrape_pages(name=name, file=dumpfile, url=url)
 
+def get_last_refresh_date(path="../data/interim/last_refresh_date.txt"):
+    with open(path, "r") as f:
+        ts = f.readline()
+    return pd.to_datetime(ts)
+
+def save_last_refresh_date(ts, path="../data/interim/last_refresh_date.txt"):
+    with open(path, "w") as f:
+        ts = datetime.strftime(ts, "%Y-%m-%d %H:%M:%S.%f")
+        f.write(ts)
+
+def check_if_exists_and_write(df, filename):
+    if not os.path.isfile(filename):
+        df.to_csv(filename)
+    else: # else it exists so append without writing the header
+        df.to_csv(filename, mode='a', header=False)
+
 def collect_deals(source="../data/processed/predicted_price.csv"):
     df = pd.read_csv(source)
     df.drop_duplicates(keep='first', subset=['query_name', 'make', 'model', 'price', 'fuel',
        'year', 'engine_size', 'engine_power', 'mileage', 'ford', 'hyundai',
        'kia', 'skoda', 'volkswagen', 'is_diesel', 'year_old'], inplace=True)
-    df['run_datetime'] = pd.to_datetime(df['run_datetime']).dt.date
-    latest_date = df.run_datetime.max()
-    df = df[df.run_datetime == latest_date]
-    df = df.query('price < (prediction+300000) and price < 3500000 and mileage<175000')
-    df.to_csv(f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
+    df['run_datetime'] = pd.to_datetime(df['run_datetime'])
+    latest_date = get_last_refresh_date()
+    df = df[df.run_datetime > latest_date]
+    df = df.query('price < 3500000 and mileage < 200000')
+    check_if_exists_and_write(df, f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
+    new_latest_date = df.run_datetime.max()
+    if not pd.isna(new_latest_date):
+        save_last_refresh_date(new_latest_date)
 
 if __name__ == "__main__":
     argParser = argparse.ArgumentParser()
