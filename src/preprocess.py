@@ -1,15 +1,33 @@
 import pandas as pd
 from datetime import datetime
 
+cols = ['adcode', 'query_name', 'make', 'model', 'link', 'price', 'fuel',
+       'year', 'engine_size', 'engine_power', 'mileage',"is_diesel","year_old", 'create_date', 'update_date']
+
+join_cols = ['adcode', 'query_name', 'make', 'model', 'link', 'price', 'fuel',
+       'year', 'engine_size', 'engine_power', 'mileage',"is_diesel","year_old"]
 
 def preprocess(filepath):
+    original = pd.read_csv("../data/interim/cars.csv")
+
     df = pd.read_csv(filepath)
-    df.drop_duplicates(subset=["link"], inplace=True)
-    df = pd.concat([df, pd.get_dummies(df.make)], axis=1)
     df["is_diesel"] = df["fuel"] == "Dízel"
     df["year_old"] = datetime.now().year - df["year"]
-    # add avg
-    # df["avg_price"] = df.apply(lambda x: similar_avg(x, df), axis=1)
+    
+    new_mask = df.adcode not in original.adcode
+    new = df[new_mask]
+    new.rename(columns={'run_datetime':'create_date'}, inplace=True)
+    new['update_date'] = new['create_date']
+
+    old = df[~new_mask]
+    old = old.join(original, how='inner', on=join_cols)
+    old.drop('update_date', axis=1, inplace=True)
+    old.rename(columns={'run_datetime':'update_date'}, inplace=True)
+
+    df = pd.concat([original[original.adcode not in new.adcode and original.adcode not in old.adcode],
+                    old,
+                    new])
+
     df.to_csv("../data/interim/training_data.csv", index=False)
 
 
