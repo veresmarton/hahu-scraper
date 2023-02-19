@@ -59,10 +59,12 @@ def scrape_page(name, file, page):
             engine_size = int(''.join(engine_size.strip(" cm³").split()))
             engine_power = int(''.join(engine_power.strip("LE").split()))
             mileage = int(''.join(mileage.strip('km').split()))
+            adcode = r.find("div", class_='talalatisor-info talalatisor-hirkod').text
+            adcode = re.findall('[0-9]+', adcode)[0]
 
             now = datetime.now()
 
-            line = [now, name, make, model, link, price, fuel, year, engine_size, engine_power, mileage]
+            line = [now, name, make, model, link, price, fuel, year, engine_size, engine_power, mileage, adcode]
             with open(file, 'a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow(line)
@@ -88,7 +90,7 @@ def save_last_refresh_date(ts, path="../data/interim/last_refresh_date.txt"):
 def check_if_exists_and_write(df, filename):
     if not os.path.isfile(filename):
         df.to_csv(filename)
-    else: # else it exists so append without writing the header
+    else:
         df.to_csv(filename, mode='a', header=False)
 
 def collect_deals(source="../data/processed/predicted_price.csv"):
