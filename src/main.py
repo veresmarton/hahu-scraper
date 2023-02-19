@@ -109,17 +109,13 @@ def collect_deals(source="../data/processed/predicted_price.csv"):
 
 if __name__ == "__main__":
     argParser = argparse.ArgumentParser()
-    argParser.add_argument("-q", "--queries", default=False)
-    argParser.add_argument("-n", "--name")
-    argParser.add_argument("-u", "--url")
-    argParser.add_argument("-f", "--file", default='../data/raw/cars.csv')
+    argParser.add_argument("-q", "--queries", default='../data/interim/queries.txt')
     args = argParser.parse_args()
-    if args.queries:
-        run_queries(args.queries, args.file)
-    else:
-        scrape_pages(name=args.name, file=args.file, url=args.url)
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    file = f"../data/raw/{now}.csv"
+    run_queries(args.queries, file)
 
-    preprocess(args.file)
+    preprocess(file)
     predict()
     collect_deals()
 
