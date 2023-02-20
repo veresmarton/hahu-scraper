@@ -12,7 +12,7 @@ def upsert(original, df):
     return updated
 
 def preprocess(filepath):
-    original = pd.read_csv("../data/interim/cars.csv")
+    original = pd.read_csv("../data/interim/cars.csv", index_col='adcode')
 
     df = pd.read_csv(filepath)
     df["is_diesel"] = df["fuel"] == "Dízel"
