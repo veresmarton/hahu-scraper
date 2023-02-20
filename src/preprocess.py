@@ -19,9 +19,10 @@ def preprocess(filepath):
     df["year_old"] = datetime.now().year - df["year"]
     df.rename(columns={'run_datetime':'update_date'}, inplace=True)
 
-    original = original.set_index('adcode')
     df = df.set_index('adcode')
 
     updated = upsert(original, df)
+    updated.to_csv("../data/interim/cars.csv")
 
+    updated = pd.concat([updated, pd.get_dummies(updated.make)], axis=1)
     updated.to_csv("../data/interim/training_data.csv", index=True)
