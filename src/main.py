@@ -18,7 +18,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def create_file(filename):
     if not os.path.exists(filename):
-        colnames = ['run_datetime', 'query_name', 'make', 'model', 'link', 'price', 'fuel', 'year', 'engine_size', 'engine_power', 'mileage']
+        colnames = ['run_datetime', 'query_name', 'make', 'model', 'link', 'price', 'fuel', 'year', 'engine_size', 'engine_power', 'mileage', 'adcode']
         with open(filename, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(colnames)
