@@ -95,15 +95,12 @@ def check_if_exists_and_write(df, filename):
 
 def collect_deals(source="../data/processed/predicted_price.csv"):
     df = pd.read_csv(source)
-    df.drop_duplicates(keep='first', subset=['query_name', 'make', 'model', 'price', 'fuel',
-       'year', 'engine_size', 'engine_power', 'mileage', 'ford', 'hyundai',
-       'kia', 'skoda', 'volkswagen', 'is_diesel', 'year_old'], inplace=True)
-    df['run_datetime'] = pd.to_datetime(df['run_datetime'])
+    df['update_date'] = pd.to_datetime(df['update_date'])
     latest_date = get_last_refresh_date()
-    df = df[df.run_datetime > latest_date]
+    df = df[df.update_date > latest_date]
     df = df.query('price < 3500000 and mileage < 200000')
     check_if_exists_and_write(df, f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
-    new_latest_date = df.run_datetime.max()
+    new_latest_date = df.update_date.max()
     if not pd.isna(new_latest_date):
         save_last_refresh_date(new_latest_date)
 
