@@ -112,7 +112,7 @@ if __name__ == "__main__":
     argParser.add_argument("-q", "--queries", default='../data/interim/queries.txt')
     args = argParser.parse_args()
     now = datetime.now().strftime("%Y%m%d%H%M%S")
-    file = f"../data/raw/{now}.csv"
+    file = f"../data/raw/cars_{now}.csv"
     run_queries(args.queries, file)
 
     preprocess(file)
