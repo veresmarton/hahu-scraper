@@ -4,9 +4,23 @@ from datetime import datetime
 cols = ['adcode', 'query_name', 'make', 'model', 'link', 'price', 'fuel',
        'year', 'engine_size', 'engine_power', 'mileage',"is_diesel","year_old", 'create_date', 'update_date']
 
+duplicated_cols = ['query_name',
+    'make',
+    'model',
+    'link',
+    'price',
+    'fuel',
+    'year',
+    'engine_size',
+    'engine_power',
+    'mileage',
+    'is_diesel',
+    'year_old']
+
 def upsert(original, df):
     not_old_mask = ~df.index.isin(original.index)
     updated = pd.concat([original, df[not_old_mask]]) # add new rows
+    df = df[~df.index.duplicated(keep='first')]
     updated.update(df) # update old rows
     updated['create_date'].fillna(updated['update_date'], inplace=True) # set new rows create_date
     return updated
