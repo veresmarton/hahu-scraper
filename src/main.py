@@ -54,11 +54,14 @@ def scrape_page(name, file, page):
                 price = np.nan
         
             details = r.find("div", class_='talalatisor-info adatok')
-            fuel, year, engine_size, _, engine_power, mileage = details.text.split(',')
-            year = int(year.strip().split('/')[0])
-            engine_size = int(''.join(engine_size.strip(" cm³").split()))
-            engine_power = int(''.join(engine_power.strip("LE").split()))
-            mileage = int(''.join(mileage.strip('km').split()))
+            try:
+                fuel, year, engine_size, _, engine_power, mileage = details.text.split(',')
+                year = int(year.strip().split('/')[0])
+                engine_size = int(''.join(engine_size.strip(" cm³").split()))
+                engine_power = int(''.join(engine_power.strip("LE").split()))
+                mileage = int(''.join(mileage.strip('km').split()))
+            except:
+                fuel, year, engine_size, engine_power, mileage = [np.nan]*5
             adcode = r.find("div", class_='talalatisor-info talalatisor-hirkod').text
             adcode = re.findall('[0-9]+', adcode)[0]
 
@@ -96,9 +99,10 @@ def check_if_exists_and_write(df, filename):
 def collect_deals(source="../data/processed/predicted_price.csv"):
     df = pd.read_csv(source)
     df['update_date'] = pd.to_datetime(df['update_date'])
+    df['create_date'] = pd.to_datetime(df['create_date'])
     latest_date = get_last_refresh_date()
-    df = df[df.update_date > latest_date]
-    df = df.query('price < 3500000 and mileage < 200000')
+    df = df[df.create_date > latest_date]
+    df = df.query('price < 3500000 and mileage < 220000')
     check_if_exists_and_write(df, f"../data/processed/deal_{datetime.now().strftime('%Y%m%d')}.csv")
     new_latest_date = df.update_date.max()
     if not pd.isna(new_latest_date):
