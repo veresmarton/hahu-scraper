@@ -17,6 +17,7 @@ def predict(filepath="../data/interim/training_data.csv"):
             "year_old",
         ]
     ]
+    X.fillna(0, inplace=True)
     y = df.price
     loaded_model = pickle.load(open("../data/processed/model.pkl", 'rb'))
     prediction = loaded_model.predict(X)
